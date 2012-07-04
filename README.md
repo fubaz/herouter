@@ -50,7 +50,13 @@ In the user interface create a new database called 'router'. Then create
 a document whose `_id` would be the host like `example.com`. Add a field
 called `destination` and give it the destination address like
 `http://www.example.com`. I recommend putting the protocol part there to
-be more explicit. And there you go.
+be more explicit. And there you go. You will need to add incoming addresses
+to your heroku application as well.
+
+    heroku domains:add example.com
+
+Then you need to follow Heroku's instructions on what to tell your DNS
+provider or server.
 
 Technical Stuff
 ---------------
