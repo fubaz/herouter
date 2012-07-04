@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Hub Dash{% endblock %}
+{% block head %}
+{{ super() }}
+<link href="/static/css/extra.css" rel="stylesheet" />
+{% endblock %}
+{% block top_navigation %}
+{% endblock %}
+{% block brand %}
+<a class="brand" href="http://vermehub.herokuapp.com/">Hub</a>
+{% endblock %}
+{% block content %}
+<header class="jumbotron subhead">
+    <h1>Oh snap!</h1>
+    <p class="lead">You don't have to go home but you can't stay here.</p>
+</header>
+<div class="row"> 
+    <div class="span6">
+        <h3>So what happened?</h3>
+        <p>
+            You landed on this page by trying to browse to <strong>{{ hostname }}/{{ uri }}</strong>.
+            This means that {{ hostname }} points to Verme Hub which should redirect you to the place you were looking for.
+            That is in case it was configured properly.
+        </p>
+        <p>
+            Somebody messed up.
+        </p>
+    </div>
+    <div class="span6">
+        <h3>What's this Hub all about?</h3>
+        <p>
+            The Hub is a part of the Verme configuration management suite. It is designed to provide easy deployment of services
+            over a combination of several cloud platforms.
+        </p>
+        <p>
+            <a class="btn" href="http://vermehub.herokuapp.com/">Read more</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

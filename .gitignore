@@ -1,0 +1,6 @@
+.env
+*.un~
+*.pyc
+*.swp
+*.swo
+build

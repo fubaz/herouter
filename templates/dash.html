@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Hub Dash{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>Hub Dash</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Destination</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for host in redirects %}
+        <tr>
+            <td>{{ host['source'] }}</td>
+            <td><a href="{{ host['destination'] }}">{{ host['destination'] }}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

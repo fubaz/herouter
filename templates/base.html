@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+        <meta charset="utf-8" />
+        <title>{% block title %}Hub{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="author" content="Ferrix Hovi" />
+
+        <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <style>
+            body {
+                padding-top: 60px;
+            }
+        </style>
+        <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+        {% endblock %}
+    </head>
+    <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    {% block brand %}<a class="brand" href="#">Hub</a>{% endblock %}
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            {% block top_navigation %}
+                            <li class="active"><a href="mapping">Mappings</a></li>
+                            {% endblock %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            {% block content %}
+            <h1>This is a simple redirection service</h1>
+            <p>You can use this service to redirect hosts to your site.</p>
+            {% endblock content %}
+
+            <hr>
+            
+            <footer><p>&copy; 2012 Ferrix. Powered by Bootstrap, jQuery, Flask, CouchDB.</p></footer>
+        </div>
+        <script src="/static/jquery/js/jquery.min.js"></script>
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>
