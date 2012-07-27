@@ -66,13 +66,59 @@ In the user interface create a new database called 'router'. Then create
 a document whose `_id` would be the host like `example.com`. Add a field
 called `destination` and give it the destination address like
 `http://www.example.com`. I recommend putting the protocol part there to
-be more explicit. And there you go. You will need to add incoming addresses
-to your heroku application as well.
+be more explicit. And there you go.
+
+You can do this from `python` (or `heroku run python`) and configure using
+the following functions:
+
+    from router import get_redirect, add_redirect, del_redirect
+    add_redirect('example.com', 'http://www.example.com/')
+    get_redirect('example.com')
+    del_redirect('example.com')
+
+You will need to add incoming addresses to your heroku application as well.
 
     heroku domains:add example.com
 
 Then you need to follow Heroku's instructions on what to tell your DNS
 provider or server.
+
+Debugging
+---------
+
+If you want to debug the application, it is best to run it on
+localhost. Sadly, that requires some setting up. You will need access
+to a CouchDB server and run the following to install the packages
+(either in a virtualenv or directly on command line):
+
+    pip install -r requirements.txt
+
+Next, you need to set some environment variables:
+
+    # Instead of redirecting, show the URL
+    # Value does not matter, true if defined
+    export DEBUG_REDIRECT=a
+
+    # Show errors to user on the browser
+    # Value does not matter, true if defined
+    export DEBUG=g
+
+    # Database url if something else than http://localhost:5984/
+    export CLOUDANT_URL=http://server.com:5984/
+
+    # Show dashboard on URL other than localhost:5000
+    export HEROKU_HOST=x
+
+    # If you want to change the port to something else than 5000
+    export PORT=4999
+
+By default, the port is 5000 and localhost:5000 is the default
+dashboard. So to use localhost to debug redirects, set
+`HEROKU_HOST=foo`, `DEBUG_REDIRECT=yes` and run the following
+lines in `python`:
+
+    from router import add_redirect
+    add_redirect('localhost:5000', 'http://example.com/')
 
 Technical Stuff
 ---------------
