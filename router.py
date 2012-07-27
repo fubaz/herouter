@@ -62,7 +62,7 @@ class Router(object):
                 if query_string:
                     query_string = '?' + query_string
 
-                if hash_index:
+                if hash_index > 0:
                     destination = destination[:hash_index]
                     anchor = destination[hash_index:]
                 else:
