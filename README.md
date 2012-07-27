@@ -6,6 +6,22 @@ different domain. This is your tool if you need to direct your
 non-www host example.com to www.example.com hosted on GitHub Pages or
 another service that does not allow several hosts to be served.
 
+Example
+-------
+
+You will best understand the behavior of the application by seeing by
+yourself. There are three views:
+
+* [Dashboard](http://dash.herouter.fuk.fi/) in the `HEROKU_HOST`
+* [Error page](http://snap.herouter.fuk.fi/) if URL is not
+  configured.
+* [Redirect](http://www.herouter.fuk.fi/) redirects to this page
+  repository
+
+Of course none of this will work if the last build has failed:
+
+[![Build Status](https://ferrix.ci.cloudbees.com/job/Herouter/badge/icon)](https://ferrix.ci.cloudbees.com/job/Herouter/)
+
 Deployment
 ----------
 

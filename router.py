@@ -2,6 +2,7 @@ from flask import Flask, redirect, request, render_template
 app = Flask(__name__)
 import os
 from datetime import datetime
+from urllib import urlencode
 
 from couchdb.client import Server
 
@@ -55,6 +56,24 @@ class Router(object):
             doc = self.db[hostname]
             if 'destination' in doc:
                 destination = doc['destination']+'/'+uri
+                query_string = urlencode(request.args)
+                hash_index = destination.find('#')
+
+                if query_string:
+                    query_string = '?' + query_string
+
+                if hash_index:
+                    destination = destination[:hash_index]
+                    anchor = destination[hash_index:]
+                else:
+                    anchor = ''
+
+                if len(uri):
+                    path = '/' + uri
+                else:
+                    path = ''
+
+                destination += path + query_string + anchor
 
                 return redirect(destination)
 
@@ -109,5 +128,5 @@ def uri_router(uri=''):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.debug = False
+    app.debug = True
     app.run('0.0.0.0', port=port)
