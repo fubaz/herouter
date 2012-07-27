@@ -3,6 +3,7 @@ app = Flask(__name__)
 import os
 from datetime import datetime
 from urllib import urlencode
+from urlparse import urlparse, parse_qs
 
 from couchdb.client import Server
 
@@ -28,13 +29,18 @@ def get_db(db_name):
 
 db = get_db(db_name)
 
-def add_redirect(source, destination):
+def add_redirect(source, destination, strip_path=False, strip_query=False,
+        prefer_destination=False):
     if source in db:
         doc = db[source]
-        doc['destination']=destination
-        db[source]=doc
     else:
-        db[source] = {'destination': destination}
+        doc = {}
+    doc['destination']=destination
+    doc['strip_path']=strip_path
+    doc['strip_query']=strip_query
+    doc['prefer_destination']=prefer_destination
+
+    db[source]=doc
 
 def get_redirect(source):
     if source in db:
@@ -79,29 +85,54 @@ class Router(object):
     def redirect(self, hostname, uri):
         if hostname in self.db and 'destination' in self.db[hostname]:
             destination = self.db[hostname]['destination']
+            in_db = True
         elif hostname in self.redirects:
             destination = self.redirects[hostname]
+            in_db = False
         else:
             return render_template(self.failure_template, hostname=hostname, uri=uri)
 
-        query_string = urlencode(request.args)
-        hash_index = destination.find('#')
+        urlbits = urlparse(destination)
 
-        if query_string:
-            query_string = '?' + query_string
+        if not urlbits.netloc:
+            urlbits = urlparse('http://' + destination)
+            if not urlbits.netloc:
+                return render_template(self.failure_template, hostname=hostname, uri=uri)
+        scheme = urlbits.scheme or 'http'
 
-        if hash_index > 0:
-            anchor = destination[hash_index:]
-            destination = destination[:hash_index]
+        destination = scheme + '://' + urlbits.netloc
+
+        query = {}
+
+        if urlbits.query:
+            query = parse_qs(urlbits.query)
+            for key, value in query.items():
+                query[key] = value[0]
+        if request.args and (in_db and not self.db[hostname].get('strip_query')):
+            prefer_destination = in_db and self.db[hostname].get('prefer_destination')
+            for key, value in request.args.items():
+                if key in query and prefer_destination:
+                    continue
+                query[key] = value
+        if query:
+            query_string = '?' + urlencode(query)
         else:
-            anchor = ''
+            query_string = ''
 
-        if len(uri) > 1:
-            path = '/' + uri
+        if urlbits.fragment:
+            fragment = '#' + urlbits.fragment
         else:
-            path = ''
+            fragment = ''
 
-        destination += path + query_string + anchor
+        if in_db and self.db[hostname].get('strip_path'):
+            path = urlbits.path
+        else:
+            path = '/' + '/'.join([
+                                   urlbits.path.strip('/'),
+                                   uri.lstrip('/')
+                                  ])
+
+        destination += path + query_string + fragment
 
         if os.environ.get('DEBUG_REDIRECT') and True or False:
             return destination

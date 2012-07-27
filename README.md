@@ -65,8 +65,8 @@ accessed through Heroku.
 In the user interface create a new database called 'router'. Then create
 a document whose `_id` would be the host like `example.com`. Add a field
 called `destination` and give it the destination address like
-`http://www.example.com`. I recommend putting the protocol part there to
-be more explicit. And there you go.
+`http://www.example.com`. The scheme does not need to be http but it is
+recommended to have some scheme there.
 
 You can do this from `python` (or `heroku run python`) and configure using
 the following functions:
@@ -82,6 +82,40 @@ You will need to add incoming addresses to your heroku application as well.
 
 Then you need to follow Heroku's instructions on what to tell your DNS
 provider or server.
+
+Special tricks
+--------------
+
+You can inject a path, query parameters and a fragment in the destination
+URL. In theory, it is possible to deliver authentication information, it
+is however not recommended. The redirect will combine the query parameters
+with whatever the user sets:
+
+    source:      http://example.com/baz/?foo=bar
+    destination: https://root:secre7@www.example.com/p?foo=baz&nop=1#e
+    result:      https://root:secre7@www.example.com/p/baz?foo=bar&nop=1#e
+
+These options can be changed in the CouchDB by giving additional fields to
+destinations. For example the following scenario would change with
+`strip_path = true` and `prefer_destination`:
+
+    source:      http://example.com/baz/?foo=bar&bar=foo
+    destination: https://root:secre7@www.example.com/p?foo=baz&nop=1
+    result:      https://root:secre7@www.example.com/p?foo=baz&nop=1&bar=foo
+
+The entire domain can be redirected to a single url by setting
+`strip_path = true` and `strip_query = true`:
+
+    source:      http://example.com/bar/?foo=bar&bar=foo
+    destination: https://www.example.com/?foo=baz#bottom
+    result:      https://www.example.com/?foo=baz#bottom
+
+These variables can be set through `python` by giving keyword parameters to
+`add_redirect`. All of them default to false:
+
+    add_redirect('x.com', 'y.com', strip_path=True, strip_query=True)
+    add_redirect('a.com', 'b.net', prefer_destination=True)
+    add_redirect('d.ork', 'd.org', True, False, True)
 
 Debugging
 ---------
