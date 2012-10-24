@@ -29,7 +29,7 @@ Deploying the application is easy
 
 Create a new Heroku (cedar) app
 
-    git clone http://github.com/ferrix/herouter
+    git clone http://github.com/fubaz/herouter
     heroku create
     heroku rename myherouter
 
